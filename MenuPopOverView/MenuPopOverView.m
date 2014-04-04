@@ -413,6 +413,8 @@
 }
 
 - (void)dismiss:(BOOL)animate {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [[UIDevice currentDevice] endGeneratingDeviceOrientationNotifications];
     
     if (!animate) {
         if (self.delegate && [self.delegate respondsToSelector:@selector(popoverViewDidDismiss:)]) {
@@ -510,8 +512,6 @@
 #pragma mark - rotation
 - (void)onDeviceRotation:(NSNotification *)noti {
     NSLog(@"device rotation detected");
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-    [[UIDevice currentDevice] endGeneratingDeviceOrientationNotifications];
     [self dismiss:NO];
 }
 
