@@ -9,7 +9,6 @@
 #import "MenuPopOverView.h"
 
 // Geometry metrics
-//#define kPopOverViewMaxWidth 280.f
 #define kPopOverViewPadding 20.f
 #define kPopOverViewHeight 44.f
 #define kPopOverCornerRadius 8.f
@@ -69,7 +68,7 @@
         return;
     }
     
-    // listen device rotation
+    // listen on device rotation
     [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onDeviceRotation:) name:UIDeviceOrientationDidChangeNotification object:nil];
     
@@ -80,6 +79,7 @@
     self.dividers = [[NSMutableArray alloc] init];
     self.buttons = [[NSMutableArray alloc] initWithCapacity:stringArray.count];
 
+    // generate buttons for string array
     for (NSString *string in stringArray) {
         CGSize textSize = [string sizeWithAttributes:@{NSFontAttributeName: kTextFont}];
         UIButton *textButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, textSize.width + 2 * kTextEdgeInsets, kButtonHeight)];
@@ -96,6 +96,7 @@
         [self.buttons addObject:textButton];
     }
     
+    // put these buttons into right position
     float totalWidth = [self reArrangeButtons:self.buttons];
     for (NSArray *btns in self.pageButtons) {
         for (UIButton *b in btns) {
@@ -103,22 +104,30 @@
         }
     }
     buttonContainer.frame = CGRectMake(0, 0, totalWidth, kButtonHeight);
+    
     [self presentPopoverFromRect:rect inView:view withContentView:buttonContainer];
 }
 
-- (void)onDeviceRotation:(NSNotification *)noti {
-    NSLog(@"device rotation detected");
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-    [[UIDevice currentDevice] endGeneratingDeviceOrientationNotifications];
-    [self dismiss:NO];
-}
-
-- (void)changeBackgroundColor:(UIButton *)sender {
-    sender.backgroundColor = kHighlightColor;
-}
-
-- (void)resetBackgroundColor:(UIButton *)sender {
-    sender.backgroundColor = kBackgroundColor;
+- (void)presentPopoverFromRect:(CGRect)rect inView:(UIView *)view withContentView:(UIView *)cView {
+    self.contentView = cView;
+    
+    [self setupLayout:rect inView:view];
+    
+    // Make the view small and transparent before animation
+    self.alpha = 0.f;
+    self.transform = CGAffineTransformMakeScale(0.1f, 0.1f);
+    
+    // animate into full size
+    // First stage animates to 1.05x normal size, then second stage animates back down to 1x size.
+    // This two-stage animation creates a little "pop" on open.
+    [UIView animateWithDuration:0.2f delay:0.f options:UIViewAnimationOptionCurveEaseInOut animations:^{
+        self.alpha = 1.f;
+        self.transform = CGAffineTransformMakeScale(1.05f, 1.05f);
+    } completion:^(BOOL finished) {
+        [UIView animateWithDuration:0.08f delay:0.f options:UIViewAnimationOptionCurveEaseInOut animations:^{
+            self.transform = CGAffineTransformIdentity;
+        } completion:nil];
+    }];
 }
 
 - (float)reArrangeButtons:(NSArray *)buttons {
@@ -295,48 +304,6 @@
     return xorig + totalWidth;
 }
 
-- (UIButton *)getControlButton:(BOOL)rightArrow {
-    UIButton *res = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, kRightButtonWidth, kButtonHeight)];
-    res.enabled = NO;
-    res.backgroundColor = kBackgroundColor;
-    res.titleLabel.font = kTextFont;
-    res.titleLabel.textColor = kTextColor;
-    res.titleLabel.textAlignment = NSTextAlignmentCenter;
-    if (rightArrow) {
-        [res setTitle:[[NSString alloc] initWithUTF8String:"\xE2\x96\xB6\xEF\xB8\x8E"] forState:UIControlStateNormal];
-        [res addTarget:self action:@selector(didTapRightArrowButton:) forControlEvents:UIControlEventTouchUpInside];
-    } else {
-        [res setTitle:[[NSString alloc] initWithUTF8String:"\xE2\x97\x80\xEF\xB8\x8E"] forState:UIControlStateNormal];
-        [res addTarget:self action:@selector(didTapLeftArrowButton:) forControlEvents:UIControlEventTouchUpInside];
-    }
-    [res addTarget:self action:@selector(changeBackgroundColor:) forControlEvents:UIControlEventTouchDown];
-    [res addTarget:self action:@selector(resetBackgroundColor:) forControlEvents:UIControlEventTouchUpOutside];
-
-    return res;
-}
-
-- (void)presentPopoverFromRect:(CGRect)rect inView:(UIView *)view withContentView:(UIView *)cView {
-    self.contentView = cView;
-    
-    [self setupLayout:rect inView:view];
-    
-    // Make the view small and transparent before animation
-    self.alpha = 0.f;
-    self.transform = CGAffineTransformMakeScale(0.1f, 0.1f);
-    
-    // animate into full size
-    // First stage animates to 1.05x normal size, then second stage animates back down to 1x size.
-    // This two-stage animation creates a little "pop" on open.
-    [UIView animateWithDuration:0.2f delay:0.f options:UIViewAnimationOptionCurveEaseInOut animations:^{
-        self.alpha = 1.f;
-        self.transform = CGAffineTransformMakeScale(1.05f, 1.05f);
-    } completion:^(BOOL finished) {
-        [UIView animateWithDuration:0.08f delay:0.f options:UIViewAnimationOptionCurveEaseInOut animations:^{
-            self.transform = CGAffineTransformIdentity;
-        } completion:nil];
-    }];
-}
-
 -(void)setupLayout:(CGRect)rect inView:(UIView*)view {
     // get the top view
     // http://stackoverflow.com/questions/3843411/getting-reference-to-the-top-most-view-window-in-ios-application/8045804#8045804
@@ -394,7 +361,6 @@
     
 //    NSLog(@"boxFrame:(%f,%f,%f,%f)", _boxFrame.origin.x, _boxFrame.origin.y, _boxFrame.size.width, _boxFrame.size.height);
     
-//    CGRect contentFrame = CGRectMake(_boxFrame.origin.x, _boxFrame.origin.y, contentWidth, kButtonHeight);
     self.contentView.frame = contentFrame;
     
     //We set the anchorPoint here so the popover will "grow" out of the arrowPoint specified by the user.
@@ -414,6 +380,7 @@
     self.userInteractionEnabled = YES;
 }
 
+#pragma mark - Touch event recognize
 - (void)tapped:(UITapGestureRecognizer *)tap {
     CGPoint point = [tap locationInView:self.contentView];
     CGRect contentVisibleBounds = CGRectZero;
@@ -445,6 +412,28 @@
     [self dismiss:YES];
 }
 
+- (void)dismiss:(BOOL)animate {
+    
+    if (!animate) {
+        if (self.delegate && [self.delegate respondsToSelector:@selector(popoverViewDidDismiss:)]) {
+            [self.delegate popoverViewDidDismiss:self];
+        }
+        
+        [self removeFromSuperview];
+    } else {
+        [UIView animateWithDuration:0.3f animations:^{
+            self.alpha = 0.1f;
+            self.transform = CGAffineTransformMakeScale(0.1f, 0.1f);
+        } completion:^(BOOL finished) {
+            if (self.delegate && [self.delegate respondsToSelector:@selector(popoverViewDidDismiss:)]) {
+                [self.delegate popoverViewDidDismiss:self];
+            }
+            
+            [self removeFromSuperview];
+        }];
+    }
+}
+
 - (void)didTapLeftArrowButton:(UIButton *)sender {
     float popoverMaxWidth = [UIScreen mainScreen].bounds.size.width - 2 * kPopOverViewPadding;
     
@@ -459,11 +448,9 @@
     sender.backgroundColor = kBackgroundColor;
     
     CGRect contentFrame = self.contentView.frame;
-//    NSLog(@"tap left with frame %f, %f", contentFrame.origin.x, contentFrame.origin.y);
     contentFrame.origin.x += popoverMaxWidth;
     [UIView animateWithDuration:0.25 animations:^{
         self.contentView.frame = contentFrame;
-//        [self setNeedsDisplay];
     }];
 }
 
@@ -484,26 +471,74 @@
     sender.backgroundColor = kBackgroundColor;
     
     CGRect contentFrame = self.contentView.frame;
-//    NSLog(@"tap right with frame %f, %f", contentFrame.origin.x, contentFrame.origin.y);
     contentFrame.origin.x -= popoverMaxWidth;
     [UIView animateWithDuration:0.25 animations:^{
         self.contentView.frame = contentFrame;
-//        [self setNeedsDisplay];
     }];
 }
 
+- (UIButton *)getControlButton:(BOOL)rightArrow {
+    UIButton *res = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, kRightButtonWidth, kButtonHeight)];
+    res.enabled = NO;
+    res.backgroundColor = kBackgroundColor;
+    res.titleLabel.font = kTextFont;
+    res.titleLabel.textColor = kTextColor;
+    res.titleLabel.textAlignment = NSTextAlignmentCenter;
+    if (rightArrow) {
+        // unicode for right arrow
+        [res setTitle:[[NSString alloc] initWithUTF8String:"\xE2\x96\xB6\xEF\xB8\x8E"] forState:UIControlStateNormal];
+        [res addTarget:self action:@selector(didTapRightArrowButton:) forControlEvents:UIControlEventTouchUpInside];
+    } else {
+        // unicode for left arrow
+        [res setTitle:[[NSString alloc] initWithUTF8String:"\xE2\x97\x80\xEF\xB8\x8E"] forState:UIControlStateNormal];
+        [res addTarget:self action:@selector(didTapLeftArrowButton:) forControlEvents:UIControlEventTouchUpInside];
+    }
+    [res addTarget:self action:@selector(changeBackgroundColor:) forControlEvents:UIControlEventTouchDown];
+    [res addTarget:self action:@selector(resetBackgroundColor:) forControlEvents:UIControlEventTouchUpOutside];
+    
+    return res;
+}
+
+- (void)changeBackgroundColor:(UIButton *)sender {
+    sender.backgroundColor = kHighlightColor;
+}
+
+- (void)resetBackgroundColor:(UIButton *)sender {
+    sender.backgroundColor = kBackgroundColor;
+}
+
+#pragma mark - rotation
+- (void)onDeviceRotation:(NSNotification *)noti {
+    NSLog(@"device rotation detected");
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [[UIDevice currentDevice] endGeneratingDeviceOrientationNotifications];
+    [self dismiss:NO];
+}
+
+- (CGRect)currentScreenBoundsDependOnOrientation
+{
+    CGRect screenBounds = [UIScreen mainScreen].bounds;
+    CGFloat width = CGRectGetWidth(screenBounds);
+    CGFloat height = CGRectGetHeight(screenBounds);
+    UIInterfaceOrientation interfaceOrientation = [UIApplication sharedApplication].statusBarOrientation;
+    if(UIInterfaceOrientationIsPortrait(interfaceOrientation)){
+        screenBounds.size = CGSizeMake(width, height);
+    }else if(UIInterfaceOrientationIsLandscape(interfaceOrientation)){
+        screenBounds.size = CGSizeMake(height, width);
+    }
+    return screenBounds ;
+}
+
+#pragma mark - custom draw
 - (void)drawRect:(CGRect)rect {
     // Drawing code
     
     // Build the popover path
     CGRect frame = _boxFrame;
-    
     float xMin = CGRectGetMinX(frame);
     float yMin = CGRectGetMinY(frame);
-    
     float xMax = CGRectGetMaxX(frame);
     float yMax = CGRectGetMaxY(frame);
-    
     float radius = kPopOverCornerRadius; //Radius of the curvature.
     
     
@@ -524,10 +559,6 @@
      1,2 = order of traversal for any given corner
      */
     CGContextRef context = UIGraphicsGetCurrentContext();
-    
-//    CGContextSetRGBStrokeColor(context, 0.0, 0.0, 0.0, 1.0);	// black
-//	CGContextSetLineWidth(context, 1.0);
-    
     CGMutablePathRef bubblePath = CGPathCreateMutable();
     
     // Move to LB2
@@ -579,59 +610,6 @@
             [dividerPath fill];
         }
     }    
-}
-
-
-- (void)dismiss:(BOOL)animate {
-
-    if (!animate) {
-        if (self.delegate && [self.delegate respondsToSelector:@selector(popoverViewDidDismiss:)]) {
-            [self.delegate popoverViewDidDismiss:self];
-        }
-        
-        [self removeFromSuperview];
-    } else {
-        [UIView animateWithDuration:0.3f animations:^{
-            self.alpha = 0.1f;
-            self.transform = CGAffineTransformMakeScale(0.1f, 0.1f);
-        } completion:^(BOOL finished) {
-            if (self.delegate && [self.delegate respondsToSelector:@selector(popoverViewDidDismiss:)]) {
-                [self.delegate popoverViewDidDismiss:self];
-            }
-            
-            [self removeFromSuperview];
-        }];
-    }
-}
-
-- (void)arrangeArrow:(CGRect)rect inView:(UIView *)destView withTopView:(UIView *)topView {
-    CGRect topViewBounds = topView.bounds;
-    CGPoint origin = [topView convertPoint:rect.origin fromView:destView];
-    CGRect destRect = CGRectMake(origin.x, origin.y, rect.size.width, rect.size.height);
-    CGFloat minY = CGRectGetMinY(destRect);
-    CGFloat maxY = CGRectGetMaxY(destRect);
-    // 1 pixel gap
-    if (maxY + kPopOverViewHeight + 1 > CGRectGetMaxY(topViewBounds)) {
-        _isArrowUp = NO;
-        _arrowPoint = CGPointMake(CGRectGetMidX(destRect), minY - 1);
-    } else {
-        _isArrowUp = YES;
-        _arrowPoint = CGPointMake(CGRectGetMidX(destRect), maxY + 1);
-    }
-}
-
-- (CGRect)currentScreenBoundsDependOnOrientation
-{
-    CGRect screenBounds = [UIScreen mainScreen].bounds;
-    CGFloat width = CGRectGetWidth(screenBounds);
-    CGFloat height = CGRectGetHeight(screenBounds);
-    UIInterfaceOrientation interfaceOrientation = [UIApplication sharedApplication].statusBarOrientation;
-    if(UIInterfaceOrientationIsPortrait(interfaceOrientation)){
-        screenBounds.size = CGSizeMake(width, height);
-    }else if(UIInterfaceOrientationIsLandscape(interfaceOrientation)){
-        screenBounds.size = CGSizeMake(height, width);
-    }
-    return screenBounds ;
 }
 
 @end
