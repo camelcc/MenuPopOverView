@@ -53,17 +53,17 @@
 @synthesize popOverDividerColor = _popOverDividerColor;
 @synthesize popOverTextColor = _popOverTextColor;
 
-- (id)init {
-    if (self = [super init]) {
-        self.backgroundColor = [UIColor clearColor];
-    }
-    return self;
+-(instancetype)init {
+    
+    return [self initWithFrame:CGRectZero];
 }
 
-- (id)initWithFrame:(CGRect)frame {
+-(instancetype)initWithFrame:(CGRect)frame {
+   
     if (self = [super initWithFrame:frame]) {
         self.backgroundColor = [UIColor clearColor];
     }
+    
     return self;
 }
 
@@ -90,7 +90,7 @@
         textButton.enabled = NO;
         textButton.backgroundColor = self.popOverBackgroundColor;
         textButton.titleLabel.font = kTextFont;
-        textButton.titleLabel.textColor = self.popOverTextColor;
+        [textButton setTitleColor:self.popOverTextColor forState:UIControlStateNormal];
         textButton.titleLabel.textAlignment = NSTextAlignmentCenter;
         [textButton setTitle:string forState:UIControlStateNormal];
         [textButton addTarget:self action:@selector(didTapButton:) forControlEvents:UIControlEventTouchUpInside];
@@ -229,7 +229,7 @@
             // add disabled rightArrowBtn
             UIButton *rightArrowBtn = [self getControlButton:YES];
             rightArrowBtn.enabled = NO;
-            rightArrowBtn.titleLabel.textColor = [UIColor lightGrayColor];
+            [rightArrowBtn setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
             CGRect rightArrowFrame = rightArrowBtn.frame;
             rightArrowFrame.origin.x = currentX;
             rightArrowBtn.frame = rightArrowFrame;
@@ -472,7 +472,7 @@
         b.enabled = YES;
     }
     ((UIButton *)[[self.pageButtons lastObject] lastObject]).enabled = NO;
-    ((UIButton *)[[self.pageButtons lastObject] lastObject]).titleLabel.textColor = [UIColor lightGrayColor];
+    [((UIButton *)[[self.pageButtons lastObject] lastObject]) setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
 
     sender.backgroundColor = self.popOverBackgroundColor;
     
@@ -488,7 +488,7 @@
     res.enabled = NO;
     res.backgroundColor = self.popOverBackgroundColor;
     res.titleLabel.font = kTextFont;
-    res.titleLabel.textColor = self.popOverTextColor;
+    [res setTitleColor:self.popOverTextColor forState:UIControlStateNormal];
     res.titleLabel.textAlignment = NSTextAlignmentCenter;
     if (rightArrow) {
         // unicode for right arrow
