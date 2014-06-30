@@ -618,7 +618,7 @@
 
 -(void)setPopOverBackgroundColor:(UIColor *)popOverBackgroundColor {
     
-    _popOverBackgroundColor = [UIColor colorWithCGColor:popOverBackgroundColor.CGColor];
+    _popOverBackgroundColor = popOverBackgroundColor;
 }
 
 -(UIColor *)popOverBackgroundColor {
@@ -634,7 +634,7 @@
 
 -(void)setPopOverHighlightColor:(UIColor *)popOverHighlightColor {
     
-    _popOverHighlightColor = [UIColor colorWithCGColor:popOverHighlightColor.CGColor];
+    _popOverHighlightColor = popOverHighlightColor;
 }
 
 -(UIColor *)popOverHighlightColor {
@@ -650,7 +650,7 @@
 
 -(void)setPopOverDividerColor:(UIColor *)popOverHighlightColor {
     
-    _popOverDividerColor = [UIColor colorWithCGColor:popOverHighlightColor.CGColor];
+    _popOverDividerColor = popOverHighlightColor;
 }
 
 -(UIColor *)popOverDividerColor {
@@ -666,7 +666,7 @@
 
 -(void)setPopOverTextColor:(UIColor *)popOverTextColor {
     
-    _popOverTextColor = [UIColor colorWithCGColor:popOverTextColor.CGColor];
+    _popOverTextColor = popOverTextColor;
 }
 
 -(UIColor *)popOverTextColor {

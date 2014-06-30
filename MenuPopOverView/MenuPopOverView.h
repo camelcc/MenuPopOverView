@@ -19,10 +19,10 @@
 
 @interface MenuPopOverView : UIView
 
-@property (nonatomic, assign) UIColor *popOverBackgroundColor;
-@property (nonatomic, assign) UIColor *popOverHighlightColor;
-@property (nonatomic, assign) UIColor *popOverDividerColor;
-@property (nonatomic, assign) UIColor *popOverTextColor;
+@property (nonatomic, copy) UIColor *popOverBackgroundColor;
+@property (nonatomic, copy) UIColor *popOverHighlightColor;
+@property (nonatomic, copy) UIColor *popOverDividerColor;
+@property (nonatomic, copy) UIColor *popOverTextColor;
 
 @property (weak, nonatomic) id<MenuPopOverViewDelegate> delegate;
 
