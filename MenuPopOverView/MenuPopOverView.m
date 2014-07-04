@@ -20,10 +20,10 @@
 #define kTextEdgeInsets 10.f
 
 // Customizable color
-#define kBackgroundColor [UIColor blackColor]
-#define kHighlightColor [UIColor lightGrayColor]
-#define kDividerColor [UIColor whiteColor]
-#define kTextColor [UIColor whiteColor]
+#define kDefaultBackgroundColor [UIColor blackColor]
+#define kDefaultHighlightColor [UIColor lightGrayColor]
+#define kDefaultDividerColor [UIColor whiteColor]
+#define kDefaultTextColor [UIColor whiteColor]
 
 @interface MenuPopOverView()
 
@@ -50,18 +50,22 @@
 @synthesize buttons = _buttons;
 @synthesize dividers = _dividers;
 @synthesize pageButtons = _pageButtons;
+@synthesize popOverBackgroundColor = _popOverBackgroundColor;
+@synthesize popOverHighlightColor = _popOverHighlightColor;
+@synthesize popOverDividerColor = _popOverDividerColor;
+@synthesize popOverTextColor = _popOverTextColor;
 
-- (id)init {
-    if (self = [super init]) {
-        self.backgroundColor = [UIColor clearColor];
-    }
-    return self;
+-(instancetype)init {
+    
+    return [self initWithFrame:CGRectZero];
 }
 
-- (id)initWithFrame:(CGRect)frame {
+-(instancetype)initWithFrame:(CGRect)frame {
+   
     if (self = [super initWithFrame:frame]) {
         self.backgroundColor = [UIColor clearColor];
     }
+    
     return self;
 }
 
@@ -87,9 +91,9 @@
         CGSize textSize = [string sizeWithAttributes:@{NSFontAttributeName: kTextFont}];
         UIButton *textButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, textSize.width + 2 * kTextEdgeInsets, kButtonHeight)];
         textButton.enabled = NO;
-        textButton.backgroundColor = kBackgroundColor;
+        textButton.backgroundColor = self.popOverBackgroundColor;
         textButton.titleLabel.font = kTextFont;
-        textButton.titleLabel.textColor = kTextColor;
+        [textButton setTitleColor:self.popOverTextColor forState:UIControlStateNormal];
         textButton.titleLabel.textAlignment = NSTextAlignmentCenter;
         [textButton setTitle:string forState:UIControlStateNormal];
         [textButton addTarget:self action:@selector(didTapButton:) forControlEvents:UIControlEventTouchUpInside];
@@ -228,7 +232,7 @@
             // add disabled rightArrowBtn
             UIButton *rightArrowBtn = [self getControlButton:YES];
             rightArrowBtn.enabled = NO;
-            rightArrowBtn.titleLabel.textColor = [UIColor lightGrayColor];
+            [rightArrowBtn setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
             CGRect rightArrowFrame = rightArrowBtn.frame;
             rightArrowFrame.origin.x = currentX;
             rightArrowBtn.frame = rightArrowFrame;
@@ -405,7 +409,7 @@
 }
 
 - (void)didTapButton:(UIButton *)sender {
-    sender.backgroundColor = kBackgroundColor;
+    sender.backgroundColor = self.popOverBackgroundColor;
     
     NSUInteger index = [self.buttons indexOfObject:sender];
     if (index != NSNotFound && self.delegate && [self.delegate respondsToSelector:@selector(popoverView:didSelectItemAtIndex:)]) {
@@ -450,7 +454,7 @@
     for (UIButton *b in [self.pageButtons objectAtIndex:_pageIndex]) {
         b.enabled = YES;
     }
-    sender.backgroundColor = kBackgroundColor;
+    sender.backgroundColor = self.popOverBackgroundColor;
     
     CGRect contentFrame = self.contentView.frame;
     contentFrame.origin.x += popoverMaxWidth;
@@ -473,9 +477,9 @@
         b.enabled = YES;
     }
     ((UIButton *)[[self.pageButtons lastObject] lastObject]).enabled = NO;
-    ((UIButton *)[[self.pageButtons lastObject] lastObject]).titleLabel.textColor = [UIColor lightGrayColor];
+    [((UIButton *)[[self.pageButtons lastObject] lastObject]) setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
 
-    sender.backgroundColor = kBackgroundColor;
+    sender.backgroundColor = self.popOverBackgroundColor;
     
     CGRect contentFrame = self.contentView.frame;
     contentFrame.origin.x -= popoverMaxWidth;
@@ -489,9 +493,9 @@
 - (UIButton *)getControlButton:(BOOL)rightArrow {
     UIButton *res = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, kRightButtonWidth, kButtonHeight)];
     res.enabled = NO;
-    res.backgroundColor = kBackgroundColor;
+    res.backgroundColor = self.popOverBackgroundColor;
     res.titleLabel.font = kTextFont;
-    res.titleLabel.textColor = kTextColor;
+    [res setTitleColor:self.popOverTextColor forState:UIControlStateNormal];
     res.titleLabel.textAlignment = NSTextAlignmentCenter;
     if (rightArrow) {
         // unicode for right arrow
@@ -509,11 +513,11 @@
 }
 
 - (void)changeBackgroundColor:(UIButton *)sender {
-    sender.backgroundColor = kHighlightColor;
+    sender.backgroundColor = self.popOverHighlightColor;
 }
 
 - (void)resetBackgroundColor:(UIButton *)sender {
-    sender.backgroundColor = kBackgroundColor;
+    sender.backgroundColor = self.popOverBackgroundColor;
 }
 
 #pragma mark - rotation
@@ -620,10 +624,74 @@
             rect.origin.y += self.contentView.frame.origin.y;
             
             UIBezierPath *dividerPath = [UIBezierPath bezierPathWithRect:rect];
-            [kDividerColor setFill];
+            [self.popOverDividerColor setFill];
             [dividerPath fill];
         }
     }    
+}
+
+-(void)setPopOverBackgroundColor:(UIColor *)popOverBackgroundColor {
+    
+    _popOverBackgroundColor = popOverBackgroundColor;
+}
+
+-(UIColor *)popOverBackgroundColor {
+    
+    if (_popOverBackgroundColor == nil) {
+        return kDefaultBackgroundColor;
+    }
+    
+    else {
+        return _popOverBackgroundColor;
+    }
+}
+
+-(void)setPopOverHighlightColor:(UIColor *)popOverHighlightColor {
+    
+    _popOverHighlightColor = popOverHighlightColor;
+}
+
+-(UIColor *)popOverHighlightColor {
+    
+    if (_popOverHighlightColor == nil) {
+        return kDefaultHighlightColor;
+    }
+    
+    else {
+        return _popOverHighlightColor;
+    }
+}
+
+-(void)setPopOverDividerColor:(UIColor *)popOverHighlightColor {
+    
+    _popOverDividerColor = popOverHighlightColor;
+}
+
+-(UIColor *)popOverDividerColor {
+    
+    if (_popOverDividerColor == nil) {
+        return kDefaultDividerColor;
+    }
+    
+    else {
+        return _popOverDividerColor;
+    }
+}
+
+-(void)setPopOverTextColor:(UIColor *)popOverTextColor {
+    
+    _popOverTextColor = popOverTextColor;
+}
+
+-(UIColor *)popOverTextColor {
+    
+    if (_popOverTextColor == nil) {
+        return kDefaultTextColor;
+    }
+    
+    else {
+        return _popOverTextColor;
+    }
 }
 
 @end

@@ -19,7 +19,13 @@
 
 @interface MenuPopOverView : UIView
 
+@property (nonatomic, copy) UIColor *popOverBackgroundColor;
+@property (nonatomic, copy) UIColor *popOverHighlightColor;
+@property (nonatomic, copy) UIColor *popOverDividerColor;
+@property (nonatomic, copy) UIColor *popOverTextColor;
+
 @property (weak, nonatomic) id<MenuPopOverViewDelegate> delegate;
+
 - (void)presentPopoverFromRect:(CGRect)rect inView:(UIView *)view withStrings:(NSArray *)stringArray;
 
 @end
