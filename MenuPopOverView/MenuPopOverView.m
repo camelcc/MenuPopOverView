@@ -20,7 +20,7 @@
 #define kTextEdgeInsets 10.f
 
 // Customizable color
-#define kDefaultBackgroundColor [UIColor whiteColor]
+#define kDefaultBackgroundColor [UIColor blackColor]
 #define kDefaultHighlightColor [UIColor lightGrayColor]
 #define kDefaultDividerColor [UIColor whiteColor]
 #define kDefaultTextColor [UIColor whiteColor]
