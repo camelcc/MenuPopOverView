@@ -3,7 +3,7 @@ Pod::Spec.new do |s|
   s.version      = "0.0.3"
   s.summary      = "A custom PopOverView looks like UIMenuController works on iPhone."
   s.homepage     = "https://github.com/camelcc/MenuPopOverView"
-  s.screenshots  = "https://github.com/camelcc/MenuPopOverView/blob/master/popOver.png"
+  s.screenshots  = "https://raw.githubusercontent.com/camelcc/MenuPopOverView/master/popOver.png"
   s.license      = 'MIT'
   s.author       = { "camel_young" => "camel.young@gmail.com" }
   s.social_media_url = "http://twitter.com/camel_young"
