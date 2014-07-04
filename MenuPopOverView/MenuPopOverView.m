@@ -37,6 +37,8 @@
 @property (nonatomic) CGRect boxFrame;
 @property (nonatomic) int pageIndex;
 
+@property (nonatomic) UIInterfaceOrientation lastInterfaceOrientation;
+
 - (void)didTapLeftArrowButton:(UIButton *)sender;
 - (void)didTapRightArrowButton:(UIButton *)sender;
 
@@ -75,6 +77,7 @@
     // listen on device rotation
     [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onDeviceRotation:) name:UIDeviceOrientationDidChangeNotification object:nil];
+    _lastInterfaceOrientation = [UIApplication sharedApplication].statusBarOrientation;
     
     UIView *buttonContainer = [[UIView alloc] initWithFrame:CGRectZero];
     buttonContainer.backgroundColor = [UIColor clearColor];
@@ -458,6 +461,8 @@
     [UIView animateWithDuration:0.25 animations:^{
         self.contentView.frame = contentFrame;
     }];
+    
+    [self setNeedsDisplay];
 }
 
 - (void)didTapRightArrowButton:(UIButton *)sender {
@@ -481,6 +486,8 @@
     [UIView animateWithDuration:0.25 animations:^{
         self.contentView.frame = contentFrame;
     }];
+    
+    [self setNeedsDisplay];
 }
 
 - (UIButton *)getControlButton:(BOOL)rightArrow {
@@ -515,7 +522,14 @@
 
 #pragma mark - rotation
 - (void)onDeviceRotation:(NSNotification *)noti {
-    NSLog(@"device rotation detected");
+    UIInterfaceOrientation orientation = [UIApplication sharedApplication].statusBarOrientation;
+    
+    if (_lastInterfaceOrientation == orientation ||
+        (UIInterfaceOrientationIsPortrait(_lastInterfaceOrientation) &&
+         UIInterfaceOrientationIsPortrait(orientation))) {
+            return;
+    }
+    
     [self dismiss:NO];
 }
 
