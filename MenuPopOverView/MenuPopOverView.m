@@ -89,7 +89,7 @@
     // generate buttons for string array
     for (NSString *string in stringArray) {
         CGSize textSize = [string sizeWithAttributes:@{NSFontAttributeName: kTextFont}];
-        UIButton *textButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, textSize.width + 2 * kTextEdgeInsets, kButtonHeight)];
+        UIButton *textButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, round(textSize.width + 2 * kTextEdgeInsets), kButtonHeight)];
         textButton.enabled = NO;
         textButton.selected = self.buttons.count == selectedIndex;
         textButton.backgroundColor = textButton.selected ? self.popOverSelectedColor : self.popOverBackgroundColor;
@@ -299,7 +299,7 @@
     for (UIButton *b in buttons) {
         buttonsWidth += b.frame.size.width;
     }
-    float incrementWidth = (totalWidth - buttonsWidth)/[buttons count];
+    float incrementWidth = round(totalWidth - buttonsWidth)/[buttons count];
     
     // adjust frame
     float currentX = xorig;
