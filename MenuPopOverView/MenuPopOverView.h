@@ -23,6 +23,7 @@
 @property (nonatomic, copy) UIColor *popOverHighlightedColor;
 @property (nonatomic, copy) UIColor *popOverSelectedColor;
 @property (nonatomic, copy) UIColor *popOverDividerColor;
+@property (nonatomic, copy) UIColor *popOverBorderColor;
 @property (nonatomic, copy) UIColor *popOverTextColor;
 @property (nonatomic, copy) UIColor *popOverHighlightedTextColor;
 @property (nonatomic, copy) UIColor *popOverSelectedTextColor;

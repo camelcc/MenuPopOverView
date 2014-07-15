@@ -643,7 +643,18 @@
             [self.popOverDividerColor setFill];
             [dividerPath fill];
         }
-    }    
+    }
+
+    // Add border if popOverBorderColor is set
+    if (self.popOverBorderColor) {
+        CAShapeLayer *layer = [[CAShapeLayer alloc] init];
+        layer.frame = self.bounds;
+        layer.path = bubblePath;
+        layer.fillColor = nil;
+        layer.lineWidth = 2;
+        layer.strokeColor = self.popOverBorderColor.CGColor;
+        [self.layer addSublayer:layer];
+    }
 }
 
 #pragma mark - color getters
