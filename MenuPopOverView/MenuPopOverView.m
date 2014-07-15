@@ -102,7 +102,10 @@
         [textButton addTarget:self action:@selector(didTapButton:) forControlEvents:UIControlEventTouchUpInside];
         [textButton addTarget:self action:@selector(changeBackgroundColor:) forControlEvents:UIControlEventTouchDown];
         [textButton addTarget:self action:@selector(resetBackgroundColor:) forControlEvents:UIControlEventTouchUpOutside];
-        
+        [textButton addTarget:self action:@selector(changeBackgroundColor:) forControlEvents:UIControlEventTouchDragEnter];
+        [textButton addTarget:self action:@selector(resetBackgroundColor:) forControlEvents:UIControlEventTouchDragExit];
+        [textButton addTarget:self action:@selector(resetBackgroundColor:) forControlEvents:UIControlEventTouchCancel];
+
         [self.buttons addObject:textButton];
     }
     
@@ -243,7 +246,10 @@
             [rightArrowBtn removeTarget:self action:@selector(didTapRightArrowButton:) forControlEvents:UIControlEventTouchUpInside];
             [rightArrowBtn removeTarget:self action:@selector(changeBackgroundColor:) forControlEvents:UIControlEventTouchDown];
             [rightArrowBtn removeTarget:self action:@selector(resetBackgroundColor:) forControlEvents:UIControlEventTouchUpOutside];
-            
+            [rightArrowBtn removeTarget:self action:@selector(changeBackgroundColor:) forControlEvents:UIControlEventTouchDragEnter];
+            [rightArrowBtn removeTarget:self action:@selector(resetBackgroundColor:) forControlEvents:UIControlEventTouchDragExit];
+            [rightArrowBtn removeTarget:self action:@selector(resetBackgroundColor:) forControlEvents:UIControlEventTouchCancel];
+
             [currentPageButtons addObjectsFromArray:pageButtons];
             [currentPageButtons addObject:rightArrowBtn];
             [self.pageButtons addObject:currentPageButtons];
@@ -514,7 +520,10 @@
     }
     [res addTarget:self action:@selector(changeBackgroundColor:) forControlEvents:UIControlEventTouchDown];
     [res addTarget:self action:@selector(resetBackgroundColor:) forControlEvents:UIControlEventTouchUpOutside];
-    
+    [res addTarget:self action:@selector(changeBackgroundColor:) forControlEvents:UIControlEventTouchDragEnter];
+    [res addTarget:self action:@selector(resetBackgroundColor:) forControlEvents:UIControlEventTouchDragExit];
+    [res addTarget:self action:@selector(resetBackgroundColor:) forControlEvents:UIControlEventTouchCancel];
+
     return res;
 }
 
