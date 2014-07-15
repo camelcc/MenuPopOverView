@@ -21,9 +21,12 @@
 
 // Customizable color
 #define kDefaultBackgroundColor [UIColor blackColor]
-#define kDefaultHighlightColor [UIColor lightGrayColor]
+#define kDefaultHighlightedColor [UIColor lightGrayColor]
+#define kDefaultSelectedColor [UIColor whiteColor]
 #define kDefaultDividerColor [UIColor whiteColor]
 #define kDefaultTextColor [UIColor whiteColor]
+#define kDefaultHighlightedTextColor [UIColor whiteColor]
+#define kDefaultSelectedTextColor [UIColor blackColor]
 
 @interface MenuPopOverView()
 
@@ -36,6 +39,7 @@
 @property (nonatomic) CGPoint arrowPoint;
 @property (nonatomic) CGRect boxFrame;
 @property (nonatomic) int pageIndex;
+@property (nonatomic) int selectedIndex;
 
 @property (nonatomic) UIInterfaceOrientation lastInterfaceOrientation;
 
@@ -48,20 +52,22 @@
 @implementation MenuPopOverView
 
 -(instancetype)init {
-    
     return [self initWithFrame:CGRectZero];
 }
 
 -(instancetype)initWithFrame:(CGRect)frame {
-   
     if (self = [super initWithFrame:frame]) {
         self.backgroundColor = [UIColor clearColor];
     }
-    
+
     return self;
 }
 
-- (void)presentPopoverFromRect:(CGRect)rect inView:(UIView *)view withStrings:(NSArray *)stringArray {
+-(void)presentPopoverFromRect:(CGRect)rect inView:(UIView *)view withStrings:(NSArray *)stringArray {
+    [self presentPopoverFromRect:rect inView:view withStrings:stringArray selectedIndex:-1];
+}
+
+- (void)presentPopoverFromRect:(CGRect)rect inView:(UIView *)view withStrings:(NSArray *)stringArray selectedIndex:(NSInteger)selectedIndex {
     if ([stringArray count] == 0) {
         return;
     }
@@ -75,6 +81,8 @@
     buttonContainer.backgroundColor = [UIColor clearColor];
     buttonContainer.clipsToBounds = YES;
 
+    self.selectedIndex = selectedIndex;
+
     self.dividers = [[NSMutableArray alloc] init];
     self.buttons = [[NSMutableArray alloc] initWithCapacity:stringArray.count];
 
@@ -83,9 +91,12 @@
         CGSize textSize = [string sizeWithAttributes:@{NSFontAttributeName: kTextFont}];
         UIButton *textButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, textSize.width + 2 * kTextEdgeInsets, kButtonHeight)];
         textButton.enabled = NO;
-        textButton.backgroundColor = self.popOverBackgroundColor;
+        textButton.selected = self.buttons.count == selectedIndex;
+        textButton.backgroundColor = textButton.selected ? self.popOverSelectedColor : self.popOverBackgroundColor;
         textButton.titleLabel.font = kTextFont;
         [textButton setTitleColor:self.popOverTextColor forState:UIControlStateNormal];
+        [textButton setTitleColor:self.popOverHighlightedTextColor forState:UIControlStateHighlighted];
+        [textButton setTitleColor:self.popOverSelectedTextColor forState:UIControlStateSelected];
         textButton.titleLabel.textAlignment = NSTextAlignmentCenter;
         [textButton setTitle:string forState:UIControlStateNormal];
         [textButton addTarget:self action:@selector(didTapButton:) forControlEvents:UIControlEventTouchUpInside];
@@ -401,13 +412,18 @@
 }
 
 - (void)didTapButton:(UIButton *)sender {
-    sender.backgroundColor = self.popOverBackgroundColor;
-    
+    for (UIButton *button in self.buttons) {
+        button.selected = NO;
+        button.backgroundColor = self.popOverBackgroundColor;
+    }
+    sender.selected = YES;
+    sender.backgroundColor = self.popOverSelectedColor;
+
     NSUInteger index = [self.buttons indexOfObject:sender];
     if (index != NSNotFound && self.delegate && [self.delegate respondsToSelector:@selector(popoverView:didSelectItemAtIndex:)]) {
         [self.delegate popoverView:self didSelectItemAtIndex:index];
     }
-    
+
     [self dismiss:YES];
 }
 
@@ -505,11 +521,12 @@
 }
 
 - (void)changeBackgroundColor:(UIButton *)sender {
-    sender.backgroundColor = self.popOverHighlightColor;
+    sender.backgroundColor = self.popOverHighlightedColor;
 }
 
 - (void)resetBackgroundColor:(UIButton *)sender {
-    sender.backgroundColor = self.popOverBackgroundColor;
+    NSUInteger index = [self.buttons indexOfObject:sender];
+    sender.backgroundColor = index == self.selectedIndex ? self.popOverSelectedColor : self.popOverBackgroundColor;
 }
 
 #pragma mark - rotation
@@ -634,14 +651,23 @@
     }
 }
 
-
--(UIColor *)popOverHighlightColor {
-    if (_popOverHighlightColor == nil) {
-        return kDefaultHighlightColor;
+-(UIColor *)popOverHighlightedColor {
+    if (_popOverHighlightedColor == nil) {
+        return kDefaultHighlightedColor;
     }
     
     else {
-        return _popOverHighlightColor;
+        return _popOverHighlightedColor;
+    }
+}
+
+-(UIColor *)popOverSelectedColor {
+    if (_popOverSelectedColor == nil) {
+        return kDefaultSelectedColor;
+    }
+
+    else {
+        return _popOverSelectedColor;
     }
 }
 
@@ -662,6 +688,26 @@
     
     else {
         return _popOverTextColor;
+    }
+}
+
+-(UIColor *)popOverHighlightedTextColor {
+    if (_popOverHighlightedTextColor == nil) {
+        return kDefaultHighlightedTextColor;
+    }
+
+    else {
+        return _popOverHighlightedTextColor;
+    }
+}
+
+-(UIColor *)popOverSelectedTextColor {
+    if (_popOverSelectedTextColor == nil) {
+        return kDefaultSelectedTextColor;
+    }
+
+    else {
+        return _popOverSelectedTextColor;
     }
 }
 
