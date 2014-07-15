@@ -430,24 +430,22 @@
 - (void)dismiss:(BOOL)animate {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [[UIDevice currentDevice] endGeneratingDeviceOrientationNotifications];
-    
-    if (!animate) {
+
+    void (^completion)(BOOL finished) = ^(BOOL finished) {
         if (self.delegate && [self.delegate respondsToSelector:@selector(popoverViewDidDismiss:)]) {
             [self.delegate popoverViewDidDismiss:self];
         }
-        
+
         [self removeFromSuperview];
+    };
+
+    if (!animate) {
+        completion(YES);
     } else {
-        [UIView animateWithDuration:0.3f animations:^{
+        [UIView animateWithDuration:0.3f delay:0.15f options:0 animations:^{
             self.alpha = 0.1f;
             self.transform = CGAffineTransformMakeScale(0.1f, 0.1f);
-        } completion:^(BOOL finished) {
-            if (self.delegate && [self.delegate respondsToSelector:@selector(popoverViewDidDismiss:)]) {
-                [self.delegate popoverViewDidDismiss:self];
-            }
-            
-            [self removeFromSuperview];
-        }];
+        } completion:completion];
     }
 }
 
