@@ -44,16 +44,8 @@
 
 @end
 
+
 @implementation MenuPopOverView
-@synthesize delegate = _delegate;
-@synthesize contentView = _contentView;
-@synthesize buttons = _buttons;
-@synthesize dividers = _dividers;
-@synthesize pageButtons = _pageButtons;
-@synthesize popOverBackgroundColor = _popOverBackgroundColor;
-@synthesize popOverHighlightColor = _popOverHighlightColor;
-@synthesize popOverDividerColor = _popOverDividerColor;
-@synthesize popOverTextColor = _popOverTextColor;
 
 -(instancetype)init {
     
@@ -630,13 +622,9 @@
     }    
 }
 
--(void)setPopOverBackgroundColor:(UIColor *)popOverBackgroundColor {
-    
-    _popOverBackgroundColor = popOverBackgroundColor;
-}
+#pragma mark - color getters
 
 -(UIColor *)popOverBackgroundColor {
-    
     if (_popOverBackgroundColor == nil) {
         return kDefaultBackgroundColor;
     }
@@ -646,13 +634,8 @@
     }
 }
 
--(void)setPopOverHighlightColor:(UIColor *)popOverHighlightColor {
-    
-    _popOverHighlightColor = popOverHighlightColor;
-}
 
 -(UIColor *)popOverHighlightColor {
-    
     if (_popOverHighlightColor == nil) {
         return kDefaultHighlightColor;
     }
@@ -662,13 +645,7 @@
     }
 }
 
--(void)setPopOverDividerColor:(UIColor *)popOverHighlightColor {
-    
-    _popOverDividerColor = popOverHighlightColor;
-}
-
 -(UIColor *)popOverDividerColor {
-    
     if (_popOverDividerColor == nil) {
         return kDefaultDividerColor;
     }
@@ -678,13 +655,7 @@
     }
 }
 
--(void)setPopOverTextColor:(UIColor *)popOverTextColor {
-    
-    _popOverTextColor = popOverTextColor;
-}
-
 -(UIColor *)popOverTextColor {
-    
     if (_popOverTextColor == nil) {
         return kDefaultTextColor;
     }
