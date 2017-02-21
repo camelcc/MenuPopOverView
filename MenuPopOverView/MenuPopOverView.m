@@ -456,7 +456,8 @@
 }
 
 - (void)didTapLeftArrowButton:(UIButton *)sender {
-    float popoverMaxWidth = [UIScreen mainScreen].bounds.size.width - 2 * kPopOverViewPadding;
+    int screenWidth = [self currentScreenBoundsDependOnOrientation].size.width;
+    float popoverMaxWidth = screenWidth - 2 * kPopOverViewPadding;
     
     // disable current buttons, enable previous page buttons
     for (UIButton *b in [self.pageButtons objectAtIndex:_pageIndex]) {
@@ -478,7 +479,8 @@
 }
 
 - (void)didTapRightArrowButton:(UIButton *)sender {
-    float popoverMaxWidth = [UIScreen mainScreen].bounds.size.width - 2 * kPopOverViewPadding;
+    int screenWidth = [self currentScreenBoundsDependOnOrientation].size.width;
+    float popoverMaxWidth = screenWidth - 2 * kPopOverViewPadding;
     
     // disable current buttons, enable next page buttons
     for (UIButton *b in [self.pageButtons objectAtIndex:_pageIndex]) {
