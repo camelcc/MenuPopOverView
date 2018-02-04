@@ -1,17 +1,14 @@
-MenuPopOverView
-===============
+//
+//  ViewController.swift
+//  Demo
+//
+//  Created by camel_yang on 1/30/18.
+//  Copyright © 2018 camelcc. All rights reserved.
+//
 
-`MenuPopOverView` been rewrite in swift. It looks like [UIMenuController](https://developer.apple.com/library/ios/documentation/iPhone/Reference/UIMenuController_Class/UIMenuController.html) but can popover from anyview you want.
+import UIKit
+import MenuPopOverView
 
-## Install
-
-Carthage:
-
-`github "camelcc/MenuPopOverView"`
-
-## Example
-
-```swift
 class ViewController: UIViewController {
     var menuPopOverView: MenuPopOverView? = nil
 
@@ -49,9 +46,4 @@ extension ViewController: MenuPopOverViewDelegate {
         menuPopOverView = nil
     }
 }
-```
 
-![popover](./popOver.png)
-
-### License
-[WTFPL](http://www.wtfpl.net/txt/copying)
