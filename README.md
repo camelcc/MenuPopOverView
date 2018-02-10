@@ -55,3 +55,6 @@ extension ViewController: MenuPopOverViewDelegate {
 
 ### License
 [WTFPL](http://www.wtfpl.net/txt/copying)
+
+### Support me
+[Buy me a coffee](https://paypal.me/camelcc)
